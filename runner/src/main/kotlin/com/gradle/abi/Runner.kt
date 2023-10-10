@@ -15,10 +15,11 @@ import java.io.File
 class Snapshotter {
     val compilationService = CompilationService.loadImplementation(Snapshotter::class.java.classLoader)
 
-    fun snapshot(jar: String): Map<String, ClassSnapshot> {
+    fun snapshot(path: String): Map<String, ClassSnapshot> {
+        val directory = File(path)
         val classSnapshots = compilationService.calculateClasspathSnapshot(
-            File(jar),
-            ClassSnapshotGranularity.CLASS_LEVEL
+            directory,
+            ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
         ).classSnapshots
         return classSnapshots
     }
@@ -27,13 +28,14 @@ class Snapshotter {
 fun main() {
     val snapshotter = Snapshotter()
 
-    snapshotter.snapshot("caller/build/classes/kotlin/main").forEach {
+    snapshotter.snapshot("../target/build/classes/kotlin/main").forEach {
         if (it.value is AccessibleClassSnapshot) {
-            println("${it.key} -->${(it.value as AccessibleClassSnapshot).classAbiHash}")
+            println("ABI fingerprint of ${it.key} is: ${(it.value as AccessibleClassSnapshot).classAbiHash}")
         } else {
-            println("${it.key} -->${it.value}")
+            println("ABI fingerprint of ${it.key} is: INACCESSIBLE")
         }
     }
 
-    Caller().call()
+    print("Calling the function yields: ")
+    InternalInlineFunction().foo()
 }
