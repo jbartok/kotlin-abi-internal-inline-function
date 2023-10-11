@@ -1,6 +1,23 @@
-# kotlin-abi-before-after
+# kotlin-abi-internal-inline-function
 
-Run the reproducer: `./gradlew run --rerun-tasks`, you get:
+This simple reproducer attempt to showcase a problem with determining the ABI fingerprint of a class like the following.
+
+```kotlin
+class InternalInlineFunction {
+
+    fun foo() = bar()
+
+    internal inline fun bar() {
+        println("foo")
+    }
+
+}
+```
+
+More specifically: if the internal inline function `bar()` changes, the ABI fingerprint of the class shouldn't chance.
+Or should it?
+
+To demonstrate, run the reproducer: `./gradlew run --rerun-tasks`, you get:
 
 ```
 ABI fingerprint of com/gradle/abi/InternalInlineFunction.class is: 2084606113631907564
