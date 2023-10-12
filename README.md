@@ -14,7 +14,7 @@ class InternalInlineFunction {
 }
 ```
 
-More specifically: if the internal inline function `bar()` changes, the ABI fingerprint of the class shouldn't chance.
+More specifically: if the internal inline function `bar()` changes, the ABI fingerprint of the class shouldn't change.
 Or should it?
 
 To demonstrate, run the reproducer: `./gradlew run --rerun-tasks`, you get:
